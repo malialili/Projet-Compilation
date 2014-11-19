@@ -1,7 +1,7 @@
 Projet_Compilation
 ==============
 
-projet de compilation
+projet de compilation M1
 
 PLAN
 
