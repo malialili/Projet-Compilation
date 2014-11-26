@@ -1,0 +1,10 @@
+KEYWORD: procedure
+KEYWORD: main
+OPERATOR: :
+KEYWORD: integer
+OPERATOR: ,
+OPERATOR: :
+KEYWORD: list
+KEYWORD: of
+KEYWORD: string
+OPERATOR: {

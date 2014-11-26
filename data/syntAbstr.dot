@@ -1,0 +1,4 @@
+digraph ArbreSyntAbstr {1 [label="AFF:"];
+0 [label="INTEGER:"];
+1 -> 0 [label=""];
+}

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+Projet de compilation M1                                                             
+====================================================================== -->
+<project name="projet" default="run">
+  <property name="JFlexLib" location="lib" />
+  <property name="CUPLib" location="lib" />
+  <property name="parser.dir" location="parser" />
+  <property name="lexer.dir" location="lexer" />
+  <property name="bin.dir" location="bin" />
+  <property name="lib.dir" location="lib" />
+  <property name="src.dir" location="src" />
+  <property name="doc.dir" location="doc" />
+  <property name="data.dir" location="data" />
+
+  <description>
+    compilation du projet Lexer
+  </description>
+
+	<!-- ================================= 
+	       target: clean
+	       ================================= -->
+	  <target name="clean" 
+		  description="Efface toutes les cibles">
+	    <delete dir="${bin.dir}"/>
+	    <delete>
+	      <fileset dir="doc">
+	        <include name="*.aux"/>
+	        <include name="*.log"/>
+	        <include name="*.pdf"/>
+	      </fileset>
+	    </delete>
+	    <delete>
+	      <fileset dir="src/lexer">
+	        <include name="*"/>
+	      </fileset>
+	    </delete>
+	    <delete>
+	      <fileset dir="src/parser">
+	        <include name="*"/>
+	      </fileset>
+	    </delete>
+	    <delete>
+	      <fileset dir="data">
+	        <include name="dm.output"/>
+	      	<include name="dm.txt"/>
+	      	<include name="dm.dot"/>
+	      	<include name="dm.err"/>
+	      </fileset>
+	    </delete>	    
+	  </target>
+	  	
+
+<!-- ================================= 
+		target: doc              
+ 	================================= -->
+	  <target name="doc" depends="">
+	    
+	    <exec 
+		executable="pdflatex"
+		dir="${doc.dir}">
+	      <arg line="spec"/> 
+	    </exec>
+	    
+	  </target>
+  <!-- ================================= 
+       target:    run the compiler on intput 
+       ================================= -->
+  <target name="run" depends="projet" description="projet de compilation">
+  	<java 
+	classname="Main"
+	classpath=".:${bin.dir}:${lib.dir}/java-cup-11a-runtime.jar"
+    	error="${data.dir}/dm.err"
+		output="${data.dir}/dm.output">
+     	<arg value="${data.dir}/dm.input"/>
+  		<arg value="${data.dir}/dm.dot"/>
+    </java>
+    
+  </target>
+  
+  <!-- ================================= 
+       target: projet            
+       ================================= -->
+  <target name="projet" depends="parser, lexer" description="compilation du projet">
+    <mkdir dir="${bin.dir}" />
+    <javac 
+	srcdir="${src.dir}"
+	destdir="${bin.dir}" 
+	classpath="${lib.dir}/java-cup-11a-runtime.jar" 
+	debug="on" 
+    includeantruntime="off"
+    />
+    
+  </target>
+  
+  <!-- =================================
+       target: lexer
+       ================================= -->
+  <target name="lexer" description="Compilation du lexer">
+    
+    <taskdef name="jflex" classname="JFlex.anttask.JFlexTask">
+      <classpath location="${JFlexLib}/JFlex.jar" />
+    </taskdef>
+  	
+  	<mkdir dir="src/lexer" />
+    <jflex 
+	
+  	file="lexer/dm.jflex" 
+  	destdir="src/lexer"/>
+  </target>
+  
+  <!-- ================================= 
+       target: parser              
+       ================================= -->
+  <target name="parser" description="Compilation du parseur">
+    
+    <taskdef name="cup" classname="java_cup.anttask.CUPTask">
+      <classpath location="${CUPLib}/java-cup-11a.jar" />
+    </taskdef>
+  	<mkdir dir="src/parser" />
+    <cup 
+	srcfile="${parser.dir}/dm.cup"
+	destdir="src/parser"
+	parser="DmParser"
+	symbols="DmSymbol"
+	dump_grammar="true"
+	dump_tables="false"
+	dump_states="false"
+	expect="0"
+	debug="debug"
+	/>
+  </target>
+  
+</project>

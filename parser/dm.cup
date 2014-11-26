@@ -1,0 +1,130 @@
+import java_cup.runtime.*;
+import java.util.Vector;
+import java.io.*;
+import java.lang.*;
+
+
+parser code {:
+     
+
+     public void syntax_error(Symbol cur_token)	{
+	System.err.printf("Error!!!!!!!!!! at Line: %d Col: %d\n",cur_token.left, cur_token.right );
+     }
+:}
+
+
+terminal PROCEDURE, MAIN, LPAR, RPAR, SEMIC, PLUS, MINUS, MINUS_U, MULT, DIV, MOD, AFF, OF, TDOT, COMMA, LIST ;
+terminal LCRO, RCRO, LT, GT, LE, GE, NOT, NE, DIFF, LBRACKET, RBRACKET, ARROW, DOT;
+terminal EQ, AND, OR, LAND, LOR, VIR, PLUSS, MINUSS, CIRCUMFLEX;
+terminal RETURN, STRUCTURE, IN, IF, THENELSE, WHILE, TRUE, FALSE, FUNCTION, TYPE, CLASS, NULL, FOREACH;
+terminal String INTEGER, FLOAT, STRING_LITERAL;
+terminal String TOK_ID;
+terminal String STRING, BOOLEAN, CHARACTER;
+
+/* The grammar */
+non terminal SyntAbstr expr, axiom, stm, lhs, rhs, bloc, inst, instrs;
+
+precedence left PLUS, MINUS;
+precedence left MULT, DIV;
+precedence left MINUS_U;
+
+start with axiom;
+
+axiom ::= 
+	PROCEDURE MAIN  LPAR TOK_ID TDOT INTEGER COMMA TOK_ID TDOT LIST OF STRING RPAR bloc:b 
+	{:  /*  programme principal */ 
+	 RESULT = b;
+	:}
+	;
+bloc ::= 
+	LCRO instrs:i RCRO
+	{:  /*  bloc  */ 
+	 RESULT = i;
+	:}
+	;
+instrs ::=
+	inst: i instrs : t	{:  RESULT = t; :}
+	|inst : i			{:	RESULT = i;	:}
+	;
+inst ::= 
+	expr:t SEMIC
+	{: 
+	 System.err.printf("***axiom\n");
+	 RESULT = t; 
+	 :} 
+	|stm:t SEMIC
+	{: 
+	 System.err.printf("***axiom\n");
+	 RESULT = t; 
+	 :}
+	;
+
+stm ::=
+	lhs:e1 AFF rhs:e2
+	{: 
+	 System.err.printf("***stm\n");
+	 RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); 
+	 :}
+	 ;
+rhs::= expr:e
+       {: 
+	 System.err.printf("***axiom\n");
+	 RESULT = e; 
+	 :}
+	;
+lhs::=TOK_ID:t
+       {: 
+	 System.err.printf("***axiom\n");
+/*	RESULT = new SyntAbstr(EnumTag.TOK_ID, t);*/
+	 :}
+	;
+
+expr ::=
+	expr:e1 PLUS expr:e2
+	{: 
+	 System.err.printf("***expr\n");
+	 RESULT = new SyntAbstr(e1, e2, EnumTag.PLUS); 
+	 :} 
+	| 
+
+	expr:e1 MINUS expr:e2
+	{: 
+	 System.err.printf("***expr  Line:%d  Col:%d \n", e1left, e1right);
+	 RESULT = new SyntAbstr(e1, e2, EnumTag.MINUS); 
+	 :} 
+	| 
+
+	expr:e1 MULT expr:e2
+	{:   
+	 System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right);
+	 RESULT = new SyntAbstr(e1, e2, EnumTag.MULT); 
+	 :} 
+	| 
+
+	expr:e1 DIV expr:e2
+	{:   
+	 System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right);
+	 RESULT = new SyntAbstr(e1, e2, EnumTag.DIV); 
+	 :} 
+	| 
+
+	LPAR expr:e RPAR
+	{: 
+	 System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright);
+	 RESULT = e; 
+	 :} 
+	| 
+
+	MINUS expr:e 
+	{: 
+	 System.err.printf("***expr  Line:%d  Col:%d \n", eleft, eright);
+	 RESULT = new SyntAbstr(e, EnumTag.MINUS_U); 
+	 :} %prec MINUS_U
+	| 
+
+	INTEGER:str
+	{: 
+	    System.err.printf("***expr Line:%d  Col:%d \n", strleft, strright);
+	    RESULT = new SyntAbstr(EnumTag.INTEGER, str); 
+	    :}
+	;

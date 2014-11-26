@@ -1,0 +1,16 @@
+procedure main ( argn : integer , argc : list of string )
+{
+
+	// i : integer;
+
+argn = 10 ;
+argn = argn + 10;
+
+/*
+l1 : list of integer;
+l1 = [2, 12, 13, 4, 5];
+foreach i in [ 0 , 1 , 2 , 3 , 4 ]{
+	l1[i]=l1[i]+5;
+	
+*/
+}

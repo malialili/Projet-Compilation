@@ -1,0 +1,53 @@
+# Initializing parser
+***Variable: v ***Line: 0  ***Col: 0
+# Current Symbol is #13
+# Shift under term #13 to state #7
+***Keyword: AFF ***Line: 0  ***Col: 1
+# Current token is #10
+***axiom
+# Reduce with prod #5 [NT=3, SZ=1]
+# Reduce rule: top state 0, lhs sym 3 -> state 2
+# Goto state #2
+# Shift under term #10 to state #23
+***Integer: 12 ***Line: 0  ***Col: 2
+# Current token is #11
+# Shift under term #11 to state #1
+***Keyword: PLUS ***Line: 0  ***Col: 4
+# Current token is #5
+***expr Line:0  Col:2 
+# Reduce with prod #12 [NT=0, SZ=1]
+# Reduce rule: top state 23, lhs sym 0 -> state 24
+# Goto state #24
+# Shift under term #5 to state #10
+***Integer: 3 ***Line: 0  ***Col: 5
+# Current token is #11
+# Shift under term #11 to state #1
+***Keyword: SEMIC ***Line: 0  ***Col: 6
+# Current token is #4
+***expr Line:0  Col:5 
+# Reduce with prod #12 [NT=0, SZ=1]
+# Reduce rule: top state 10, lhs sym 0 -> state 16
+# Goto state #16
+***expr
+# Reduce with prod #6 [NT=0, SZ=3]
+# Reduce rule: top state 23, lhs sym 0 -> state 24
+# Goto state #24
+***axiom
+# Reduce with prod #4 [NT=4, SZ=1]
+# Reduce rule: top state 23, lhs sym 4 -> state 25
+# Goto state #25
+***stm
+# Reduce with prod #3 [NT=2, SZ=3]
+# Reduce rule: top state 0, lhs sym 2 -> state 4
+# Goto state #4
+# Shift under term #4 to state #21
+# Current token is #0
+***axiom
+# Reduce with prod #2 [NT=1, SZ=2]
+# Reduce rule: top state 0, lhs sym 1 -> state 3
+# Goto state #3
+# Shift under term #0 to state #22
+# Current token is #0
+# Reduce with prod #0 [NT=0, SZ=2]
+# Reduce rule: top state 0, lhs sym 0 -> state 8
+# Goto state #8
