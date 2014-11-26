@@ -1,0 +1,10 @@
+var : integer;
+
+procedure main ( argn : integer , argc : list of string )
+{
+
+ //i : integer ;
+
+	var = 10;
+
+}

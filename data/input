@@ -1,11 +1,9 @@
 procedure main ( argn : integer , argc : list of string )
 {
 
-	// i : integer;
+	// i : integer;argn = 10 ;
 
-argn = 10 ;
-argn = argn + 10;
-
+	argn = 10 + 10;
 /*
 l1 : list of integer;
 l1 = [2, 12, 13, 4, 5];
