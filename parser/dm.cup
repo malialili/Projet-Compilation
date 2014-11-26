@@ -18,11 +18,11 @@ terminal LCRO, RCRO, LT, GT, LE, GE, NOT, NE, DIFF, LBRACKET, RBRACKET, ARROW, D
 terminal EQ, AND, OR, LAND, LOR, VIR, PLUSS, MINUSS, CIRCUMFLEX;
 terminal RETURN, STRUCTURE, IN, IF, THENELSE, WHILE, TRUE, FALSE, FUNCTION, TYPE, CLASS, NULL, FOREACH;
 terminal String INTEGER, FLOAT, STRING_LITERAL;
-terminal String TOK_ID;
+terminal String ID;
 terminal String STRING, BOOLEAN, CHARACTER;
 
 /* The grammar */
-non terminal SyntAbstr expr, axiom, stm, lhs, rhs, bloc, inst, instrs;
+non terminal SyntAbstr expr, axiom, stm, lhs, rhs, bloc, inst, instrs, decls, decl, vars, var, pprog;
 
 precedence left PLUS, MINUS;
 precedence left MULT, DIV;
@@ -30,8 +30,12 @@ precedence left MINUS_U;
 
 start with axiom;
 
-axiom ::= 
-	PROCEDURE MAIN  LPAR TOK_ID TDOT INTEGER COMMA TOK_ID TDOT LIST OF STRING RPAR bloc:b 
+axiom ::= pprog:p 				{:	System.err.printf("***programme principal \n"); RESULT = p;	:}
+		|decls:d  pprog: p 		{:	System.err.printf("***declaration + programme principal \n"); :}
+		;
+
+pprog ::= 
+	PROCEDURE MAIN  LPAR ID TDOT INTEGER COMMA ID TDOT LIST OF STRING RPAR bloc:b 
 	{:  /*  programme principal */ 
 	 RESULT = b;
 	:}
@@ -41,42 +45,50 @@ bloc ::=
 	{:  /*  bloc  */ 
 	 RESULT = i;
 	:}
+	|LCRO decls : d STRING_LITERAL instrs:i RCRO
 	;
+	
+decls ::=
+	 decl:d  decls:s 			{:	System.err.printf("***plusieurs declaration \n"); 	:}
+	 |decl:d 					{:	System.err.printf("*** une declaration \n"); RESULT = d;	:}
+	 ;
+	 
+decl ::= vars:v TDOT INTEGER	{:	System.err.printf("***declaration \n"); RESULT = v;	:}
+		|vars:v TDOT FLOAT		{:	System.err.printf("***declaration \n"); RESULT = v;	:}
+		|vars:v TDOT STRING		{:	System.err.printf("***declaration \n"); RESULT = v;	:}
+		|vars:v TDOT CHARACTER 	{:	System.err.printf("***declaration \n"); RESULT = v;	:}
+		;
+
+vars ::= ID COMMA vars:v 		{:	System.err.printf("***variables \n"); RESULT = v;	:}
+		|ID						{:	System.err.printf("***variable\n");	:}
+		;
+		
+		
 instrs ::=
-	inst: i instrs : t	{:  RESULT = t; :}
-	|inst : i			{:	RESULT = i;	:}
+	inst: i STRING_LITERAL instrs : t	{: System.err.printf("***instrs \n" ); :}
+	|inst : i			{:	System.err.printf("***inst \n"); RESULT = i;	:}
 	;
 inst ::= 
 	expr:t SEMIC
 	{: 
-	 System.err.printf("***axiom\n");
+	 System.err.printf("***inst \n");
 	 RESULT = t; 
 	 :} 
 	|stm:t SEMIC
 	{: 
-	 System.err.printf("***axiom\n");
+	 System.err.printf("***stm\n");
 	 RESULT = t; 
 	 :}
 	;
 
 stm ::=
-	lhs:e1 AFF rhs:e2
-	{: 
-	 System.err.printf("***stm\n");
-	 RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); 
-	 :}
+	lhs:e1 AFF rhs:e2		{: System.err.printf("***stm\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
 	 ;
-rhs::= expr:e
-       {: 
-	 System.err.printf("***axiom\n");
-	 RESULT = e; 
-	 :}
+	 
+rhs::= expr:e				{: System.err.printf("***rhs\n");RESULT = e; :}
 	;
-lhs::=TOK_ID:t
-       {: 
-	 System.err.printf("***axiom\n");
-/*	RESULT = new SyntAbstr(EnumTag.TOK_ID, t);*/
-	 :}
+	
+lhs::=ID:t					{: System.err.printf("***lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);:}
 	;
 
 expr ::=

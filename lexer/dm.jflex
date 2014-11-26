@@ -23,7 +23,7 @@ LineTerminator	= \r|\n|\r\n
 WhiteSpace	= {LineTerminator} | [ \t\f]
 Integer		= [0-9]+
 String 		= [a-zA-z0-9]([a-zA-z0-9]|'_')+
-ID		=[a-zA-Z]([a-zA-z0-9]|'_')*
+IDENTIFIER		=[a-zA-Z]([a-zA-z0-9]|'_')*
 %state STRING
 
 %%
@@ -213,9 +213,9 @@ ID		=[a-zA-Z]([a-zA-z0-9]|'_')*
 	return symbol(DmSymbol.INTEGER, yytext()); 
     }
 
-    {ID}     { 
+    {IDENTIFIER}     { 
 	System.err.printf("***Variable: %s ***Line: %d  ***Col: %d\n", yytext(), yyline,yycolumn );
-	return symbol(DmSymbol.TOK_ID, yytext()); 
+	return symbol(DmSymbol.ID, yytext()); 
     }
     
     {String}     { 

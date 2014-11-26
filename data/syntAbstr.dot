@@ -1,4 +1,8 @@
-digraph ArbreSyntAbstr {1 [label="AFF:"];
+digraph ArbreSyntAbstr {3 [label="AFF:"];
+2 [label="PLUS:"];
 0 [label="INTEGER:"];
-1 -> 0 [label=""];
+2 -> 0 [label=""];
+1 [label="INTEGER:"];
+2 -> 1 [label=""];
+3 -> 2 [label=""];
 }
