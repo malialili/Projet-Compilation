@@ -42,10 +42,9 @@ Projet de compilation M1
 	    </delete>
 	    <delete>
 	      <fileset dir="data">
-	        <include name="dm.output"/>
-	      	<include name="dm.txt"/>
-	      	<include name="dm.dot"/>
-	      	<include name="dm.err"/>
+	        <include name="output"/>
+	      	<include name="txt"/>
+	      	<include name="err"/>
 	      </fileset>
 	    </delete>	    
 	  </target>
@@ -70,10 +69,9 @@ Projet de compilation M1
   	<java 
 	classname="Main"
 	classpath=".:${bin.dir}:${lib.dir}/java-cup-11a-runtime.jar"
-    	error="${data.dir}/dm.err"
-		output="${data.dir}/dm.output">
-     	<arg value="${data.dir}/dm.input"/>
-  		<arg value="${data.dir}/dm.dot"/>
+    	error="${data.dir}/err"
+		output="${data.dir}/output">
+     	<arg value="${data.dir}/input"/>
     </java>
     
   </target>
