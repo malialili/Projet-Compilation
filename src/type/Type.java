@@ -1,7 +1,9 @@
+package type;
 
 import java.io.*;
 import java.lang.*;
 import java.util.*;
+import stree.*;
 
 // Les types
 // cf EnumType pour connaitre les types autorisés
@@ -17,25 +19,26 @@ public class Type {
 	private Type left; // partie gauche d'un type complexe
 	private Type right; // partie droite d'un type complexe
 	private EnumType type;  // le type (cf EnumType)	
-
+	private static int uniquid = 0;
+	
 	public Type(Type left, Type right, EnumType type) {
 		this.left=left;
 		this.right=right;
-		this.id=Main.id++;
+		this.id=uniquid++;
 		this.type=type;
 	}
 
 	public Type(Type left, EnumType type) {
 		this.left=left;
 		this.right=null;
-		this.id=Main.id++;
+		this.id=uniquid++;
 		this.type=type;
 	}
 
 	public Type(EnumType type) {
 		this.left=null;
 		this.right=null;
-		this.id=Main.id++;
+		this.id=uniquid++;
 		this.type=type;
 	}
 

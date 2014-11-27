@@ -1,7 +1,13 @@
+package env;
 
 import java.io.*;
 import java.lang.*;
 import java.util.*;
+
+import type.*;
+import stree.*;
+import tree.*;
+
 
 // Environnement
 // Il sagit d'une pile d'arbres binaires partagés
@@ -12,33 +18,38 @@ public class Env {
 	private Env next;
 	private BinaryTree root=null;
 	private int id;
+	private static int uniquid = 0;
 
 	public Env(Env prev, Env next, BinaryTree root) {
 		this.prev=prev;
 		this.next=next;
 		this.root=root;
-		this.id=Main.id++;
+		this.id=uniquid++;
+		
 	}
 
 	public Env(Env prev, Env next) {
 		this.prev=prev;
 		this.next=next;
 		this.root=null;
-		this.id=Main.id++;
+		this.id=uniquid++;
+		
 	}
 
 	public Env(Env prev) {
 		this.prev=prev;
 		this.next=null;
 		this.root=null;
-		this.id=Main.id++;
+		this.id=uniquid++;
+		
 	}
 
 	public Env() {
 		this.prev=null;
 		this.next=null;
 		this.root=null;
-		this.id=Main.id++;
+		this.id=uniquid++;
+		
 	}
 
 	public int getId() {

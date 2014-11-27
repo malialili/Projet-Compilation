@@ -44,6 +44,7 @@ Projet de compilation M1
 	      <fileset dir="data">
 	        <include name="output"/>
 	      	<include name="txt"/>
+	      	<include name="*.dot"/>
 	      	<include name="err"/>
 	      </fileset>
 	    </delete>	    
@@ -72,6 +73,8 @@ Projet de compilation M1
     	error="${data.dir}/err"
 		output="${data.dir}/output">
      	<arg value="${data.dir}/input"/>
+     	
+  		<arg value="${data.dir}/input2"/>
     </java>
     
   </target>

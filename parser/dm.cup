@@ -2,16 +2,63 @@ import java_cup.runtime.*;
 import java.util.Vector;
 import java.io.*;
 import java.lang.*;
+import stree.*;
 
-
-parser code {:
+/*parser code {:
      
 
      public void syntax_error(Symbol cur_token)	{
 	System.err.printf("Error!!!!!!!!!! at Line: %d Col: %d\n",cur_token.left, cur_token.right );
      }
-:}
+:}*/
+parser code {: 
 
+    public void report_error(String message, Object info) {
+        StringBuffer msg = new StringBuffer("error");
+        if (info instanceof Symbol) {
+            Symbol s = (Symbol) info;
+            msg.append(" in line ");
+            msg.append(s.left);
+        }
+        msg.append(": ");
+        msg.append(message);
+        System.err.println(msg);
+    }
+
+    public void report_error(String message) {
+        StringBuffer msg = new StringBuffer("error");
+        System.err.println(msg);
+    }
+
+    public void report_error(String message, int line) {
+        StringBuffer msg = new StringBuffer("error in line ");
+        msg.append(line);
+        msg.append(": ");
+        msg.append(message);
+        System.err.println(msg);
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+	throw new RuntimeException("Fatal Syntax Error");
+    }
+
+    public void syntax_error(Symbol cur_token) {
+        StringBuffer msg = new StringBuffer("syntax error in ");
+        msg.append((Integer.valueOf(cur_token.left + 1))+"("+cur_token.right+")");
+        System.err.println(msg);
+    }
+
+    public void syntax_error(int line, int column) {
+        StringBuffer msg = new StringBuffer("syntax error in ");
+        msg.append((Integer.valueOf(line+1))+"("+column+")");
+        System.err.println(msg);
+    }
+
+    :}
+
+init with {:
+    :}
 
 terminal PROCEDURE, MAIN, LPAR, RPAR, SEMIC, PLUS, MINUS, MINUS_U, MULT, DIV, MOD, AFF, OF, TDOT, COMMA, LIST ;
 terminal LCRO, RCRO, LT, GT, LE, GE, NOT, NE, DIFF, LBRACKET, RBRACKET, ARROW, DOT;
@@ -22,11 +69,18 @@ terminal String ID;
 terminal String STRING, BOOLEAN, CHARACTER;
 
 /* The grammar */
-non terminal SyntAbstr expr, axiom, stm, lhs, rhs, bloc, inst, instrs, decls, decl, vars, var, pprog;
+non terminal  axiom;
+non terminal SyntAbstr expr, stm, lhs, rhs, bloc, inst, instrs, decls, decl, vars, type, var, pprog, exprl;
 
+
+precedence nonassoc THENELSE;
+precedence nonassoc IF;
+precedence left AND;
+precedence left OR;
+precedence left LT, GT, LE, GE, AFF, DIFF;
 precedence left PLUS, MINUS;
-precedence left MULT, DIV;
-precedence left MINUS_U;
+precedence left MULT, DIV, MOD;
+precedence left MINUS_U, NOT;
 
 start with axiom;
 
@@ -35,108 +89,77 @@ axiom ::= pprog:p 				{:	System.err.printf("***programme principal \n"); RESULT 
 		;
 
 pprog ::= 
-	PROCEDURE MAIN  LPAR ID TDOT INTEGER COMMA ID TDOT LIST OF STRING RPAR bloc:b 
-	{:  /*  programme principal */ 
-	 RESULT = b;
-	:}
-	;
+	PROCEDURE MAIN  LPAR ID TDOT INTEGER COMMA ID TDOT LIST OF STRING RPAR bloc:b 	{: RESULT = b;:}
+	;	
 bloc ::= 
-	LCRO instrs:i RCRO
+	LCRO inst:i RCRO
 	{:  /*  bloc  */ 
 	 RESULT = i;
 	:}
-	|LCRO decls : d STRING_LITERAL instrs:i RCRO
+	|LCRO decls:d instrs:i RCRO
+	;
+		
+decls ::=
+	  decls:s decl:d 		{:	System.err.printf("*** plusieurs declaration \n"); 	:}
+	 |decl:d 				{:	System.err.printf("*** une declaration \n"); RESULT = d;	:}
+	 ;	 
+decl ::= 
+	vars:v TDOT type SEMIC	{:	System.err.printf("*** declaration \n"); RESULT = v;	:}
 	;
 	
-decls ::=
-	 decl:d  decls:s 			{:	System.err.printf("***plusieurs declaration \n"); 	:}
-	 |decl:d 					{:	System.err.printf("*** une declaration \n"); RESULT = d;	:}
-	 ;
-	 
-decl ::= vars:v TDOT INTEGER	{:	System.err.printf("***declaration \n"); RESULT = v;	:}
-		|vars:v TDOT FLOAT		{:	System.err.printf("***declaration \n"); RESULT = v;	:}
-		|vars:v TDOT STRING		{:	System.err.printf("***declaration \n"); RESULT = v;	:}
-		|vars:v TDOT CHARACTER 	{:	System.err.printf("***declaration \n"); RESULT = v;	:}
+type::=
+		INTEGER	
+		|FLOAT
+		|STRING
+		|CHARACTER
 		;
-
-vars ::= ID COMMA vars:v 		{:	System.err.printf("***variables \n"); RESULT = v;	:}
-		|ID						{:	System.err.printf("***variable\n");	:}
-		;
-		
+			
+vars ::= 
+	ID:t COMMA vars:v 		{:	System.err.printf("*** variables \n"); RESULT =v;	:}
+	|ID:t 						{:	System.err.printf("*** variable\n");:}
+	;	
 		
 instrs ::=
-	inst: i STRING_LITERAL instrs : t	{: System.err.printf("***instrs \n" ); :}
-	|inst : i			{:	System.err.printf("***inst \n"); RESULT = i;	:}
+	instrs:t inst:i  	{: System.err.printf("*** instrs \n" ); :}
+	|inst:i							{:	System.err.printf("*** inst \n"); RESULT = i;	:}
 	;
+	
 inst ::= 
-	expr:t SEMIC
-	{: 
-	 System.err.printf("***inst \n");
-	 RESULT = t; 
-	 :} 
-	|stm:t SEMIC
-	{: 
-	 System.err.printf("***stm\n");
-	 RESULT = t; 
-	 :}
+	expr:t SEMIC			{: System.err.printf("*** inst \n"); RESULT = t; :} 
+	|stm:t SEMIC			{: System.err.printf("*** stm\n"); RESULT = t; :}
 	;
 
 stm ::=
-	lhs:e1 AFF rhs:e2		{: System.err.printf("***stm\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
-	 ;
-	 
-rhs::= expr:e				{: System.err.printf("***rhs\n");RESULT = e; :}
+	lhs:e1 AFF rhs:e2		{: System.err.printf("*** stm\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
+	|IF exprl:e stm:i1 THENELSE stm:i2  {: /* RESULT = new SyntAbstr(e, EnumTag.IF, new SyntAbstr(i1, i2, EnumTag.THENELSE));*/  :}
+	|IF exprl:e stm:i  {:  RESULT = new SyntAbstr(e, i, EnumTag.IF); :} /*%prec IF_WITHOUT_ELSE*/
+	|WHILE exprl:e stm:i {:  RESULT =  new SyntAbstr(e, i, EnumTag.WHILE); :}
+	|expr:e1 EQ expr:e2 SEMIC {:  RESULT = new SyntAbstr(e1, e2, EnumTag.EQ);:}
+	;
+		 
+rhs::= 
+	expr:e					{: System.err.printf("*** rhs\n");RESULT = e; :}
+	;	
+lhs::=
+	ID:t					{: System.err.printf("*** lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);:}
+	;
+expr ::=
+	expr:e1 PLUS expr:e2	{: System.err.printf("***expr	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.PLUS); :} 
+	|expr:e1 MINUS expr:e2	{: System.err.printf("***expr  	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MINUS); :} 
+	|expr:e1 MULT expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MULT); :} 
+	|expr:e1 DIV expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.DIV); :} 
+	|LPAR expr:e RPAR		{: System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright); RESULT = e; :} 
+	|MINUS expr:e 			{: System.err.printf("***expr  	Line:%d  Col:%d \n", eleft, eright);	RESULT = new SyntAbstr(e, EnumTag.MINUS_U); :} %prec MINUS_U
+	|INTEGER:str			{: System.err.printf("***expr 	Line:%d  Col:%d \n", strleft, strright); RESULT = new SyntAbstr(EnumTag.INTEGER, str); :}
+	;
+
+exprl ::=
+	exprl:e1 AND exprl:e2	{: System.err.printf("***expr	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.AND); :} 
+	|expr:e1 OR expr:e2		{: System.err.printf("***expr  	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.OR); :} 
+	|NOT exprl:e			{: System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright); RESULT = new SyntAbstr(e, EnumTag.NOT); :}  %prec NOT
+	|expr:e1 LAND expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LAND); :} 
+	|expr:e1 LOR expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LOR); :} 
+	|expr:e1 EQ expr:e2		{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.EQ); :} 
+	|LPAR exprl:e RPAR		{: System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright); RESULT = e; :} 
 	;
 	
-lhs::=ID:t					{: System.err.printf("***lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);:}
-	;
-
-expr ::=
-	expr:e1 PLUS expr:e2
-	{: 
-	 System.err.printf("***expr\n");
-	 RESULT = new SyntAbstr(e1, e2, EnumTag.PLUS); 
-	 :} 
-	| 
-
-	expr:e1 MINUS expr:e2
-	{: 
-	 System.err.printf("***expr  Line:%d  Col:%d \n", e1left, e1right);
-	 RESULT = new SyntAbstr(e1, e2, EnumTag.MINUS); 
-	 :} 
-	| 
-
-	expr:e1 MULT expr:e2
-	{:   
-	 System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right);
-	 RESULT = new SyntAbstr(e1, e2, EnumTag.MULT); 
-	 :} 
-	| 
-
-	expr:e1 DIV expr:e2
-	{:   
-	 System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right);
-	 RESULT = new SyntAbstr(e1, e2, EnumTag.DIV); 
-	 :} 
-	| 
-
-	LPAR expr:e RPAR
-	{: 
-	 System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright);
-	 RESULT = e; 
-	 :} 
-	| 
-
-	MINUS expr:e 
-	{: 
-	 System.err.printf("***expr  Line:%d  Col:%d \n", eleft, eright);
-	 RESULT = new SyntAbstr(e, EnumTag.MINUS_U); 
-	 :} %prec MINUS_U
-	| 
-
-	INTEGER:str
-	{: 
-	    System.err.printf("***expr Line:%d  Col:%d \n", strleft, strright);
-	    RESULT = new SyntAbstr(EnumTag.INTEGER, str); 
-	    :}
-	;

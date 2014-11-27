@@ -1,5 +1,9 @@
 import java.io.FileReader;
 import java_cup.runtime.Symbol;
+import stree.*;
+import tree.*;
+import env.*;
+import type.*;
 
 public class Main {
 	static int id=0;

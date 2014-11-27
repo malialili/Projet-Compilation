@@ -1,0 +1,14 @@
+***Keyword: LPAR ***Line: 0  ***Col: 15
+***Variable: argn ***Line: 0  ***Col: 17
+***Variable: argc ***Line: 0  ***Col: 34
+***Keyword: RPAR ***Line: 0  ***Col: 56
+***Variable: argn ***Line: 5  ***Col: 1
+***Keyword: AFF ***Line: 5  ***Col: 6
+*** lhs
+***Integer: 10 ***Line: 5  ***Col: 8
+***Keyword: SEMIC ***Line: 5  ***Col: 10
+***expr 	Line:5  Col:8 
+*** rhs
+*** stm
+*** stm
+***programme principal 
