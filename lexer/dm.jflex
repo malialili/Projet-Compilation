@@ -84,6 +84,8 @@ IDENTIFIER		=[a-zA-Z]([a-zA-z0-9]|'_')*
 					
 	foreach		{System.out.println("KEYWORD: " +  yytext());
 					return symbol(DmSymbol.FOREACH, yytext());}
+	repeat		{System.out.println("KEYWORD: " +  yytext());
+					return symbol(DmSymbol.REPEAT, yytext());}
 					
 	in			{System.out.println("KEYWORD: " +  yytext());
 					return symbol(DmSymbol.IN, yytext());}

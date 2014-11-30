@@ -63,15 +63,15 @@ init with {:
 terminal PROCEDURE, MAIN, LPAR, RPAR, SEMIC, PLUS, MINUS, MINUS_U, MULT, DIV, MOD, AFF, OF, TDOT, COMMA, LIST ;
 terminal LCRO, RCRO, LT, GT, LE, GE, NOT, NE, DIFF, LBRACKET, RBRACKET, ARROW, DOT;
 terminal EQ, AND, OR, LAND, LOR, VIR, PLUSS, MINUSS, CIRCUMFLEX;
-terminal RETURN, STRUCTURE, IN, IF, THENELSE, WHILE, TRUE, FALSE, FUNCTION, TYPE, CLASS, NULL, FOREACH;
+terminal RETURN, STRUCTURE, IN, IF, THENELSE, WHILE, TRUE, FALSE, FUNCTION, TYPE, CLASS, NULL, FOREACH, REPEAT;
 terminal String INTEGER, FLOAT, STRING_LITERAL;
 terminal String ID;
 terminal String STRING, BOOLEAN, CHARACTER;
 
 /* The grammar */
 non terminal  axiom;
-non terminal SyntAbstr expr, stm, lhs, rhs, bloc, inst, instrs, decls, decl, vars, type, var, pprog, exprl;
-
+non terminal SyntAbstr expr, stm, lhs, rhs, bloc, inst, instrs, decls, decl, stype, ctype, strc, var, pprog, exprl;
+non terminal SyntAbstr fcts, fct, params, param, list, nbr;
 
 precedence nonassoc THENELSE;
 precedence nonassoc IF;
@@ -84,63 +84,94 @@ precedence left MINUS_U, NOT;
 
 start with axiom;
 
-axiom ::= pprog:p 				{:	System.err.printf("***programme principal \n"); RESULT = p;	:}
-		|decls:d  pprog: p 		{:	System.err.printf("***declaration + programme principal \n"); :}
-		;
+axiom ::= 
+	pprog:p 					{:	System.err.printf("***axiom \n"); RESULT = p;:}
+	|decls:d  pprog: p 			{:	System.err.printf("***axiom \n"); RESULT = p;:}
+	|fcts:f pprog:p				{:	System.err.printf("***axiom \n"); RESULT = p;:}
+	|decls:d  pprog: p 	fcts:f	{:	System.err.printf("***axiom \n"); RESULT = f;:}
+	|decls:d  fcts:f pprog:p	{:	System.err.printf("***axiom \n"); RESULT = p;:}
+	;
 
 pprog ::= 
-	PROCEDURE MAIN  LPAR ID TDOT INTEGER COMMA ID TDOT LIST OF STRING RPAR bloc:b 	{: RESULT = b;:}
+	PROCEDURE MAIN  LPAR ID TDOT INTEGER COMMA ID TDOT LIST OF STRING RPAR bloc:b 	
+	{: System.err.printf("*** pprog \n"); RESULT = b;:}
+	;
+fcts::=
+	fcts:f fct:t 		{: System.err.printf("*** fcts \n"); RESULT = t; :}
 	;	
+fct ::=
+	FUNCTION params:p bloc:b  		{: System.err.printf("*** FUNCTION \n"); RESULT = b; :}
+	|PROCEDURE params:p bloc:b 		{: System.err.printf("*** PROCEDURE \n"); RESULT = b; :}
+	;		
 bloc ::= 
-	LCRO inst:i RCRO
-	{:  /*  bloc  */ 
-	 RESULT = i;
-	:}
-	|LCRO decls:d instrs:i RCRO
+	LCRO instrs:i RCRO				{: System.err.printf("*** bloc \n"); RESULT = i; :}
+	|LCRO decls:d instrs:i RCRO		{: System.err.printf("*** bloc \n"); RESULT = i; :}
 	;
 		
 decls ::=
-	  decls:s decl:d 		{:	System.err.printf("*** plusieurs declaration \n"); 	:}
-	 |decl:d 				{:	System.err.printf("*** une declaration \n"); RESULT = d;	:}
+	  decls:s decl:d 			{:	System.err.printf("*** decls \n"); 	:}
+	 |decl:d 					{:	System.err.printf("*** decls \n"); RESULT = d;:}
 	 ;	 
 decl ::= 
-	vars:v TDOT type SEMIC	{:	System.err.printf("*** declaration \n"); RESULT = v;	:}
+	ID:t TDOT stype:s SEMIC					{:	System.err.printf("*** decl \n"); RESULT = s;:}
+	|ID:t TDOT ctype:c SEMIC				{:	System.err.printf("*** decl \n"); RESULT = c;:}
+	|FUNCTION params:p TDOT stype:s SEMIC	{:	System.err.printf("*** decl \n"); RESULT = s;:}
+	|PROCEDURE params:p SEMIC				{:	System.err.printf("*** decl \n"); RESULT = p;:}
 	;
-	
-type::=
-		INTEGER	
-		|FLOAT
-		|STRING
-		|CHARACTER
-		;
-			
-vars ::= 
-	ID:t COMMA vars:v 		{:	System.err.printf("*** variables \n"); RESULT =v;	:}
-	|ID:t 						{:	System.err.printf("*** variable\n");:}
+params ::=
+	LPAR params:s COMMA param:p RPAR	{:	System.err.printf("*** params \n"); RESULT = s;:}
+	|LPAR param:p RPAR					{:	System.err.printf("*** params \n"); RESULT = p;:}			
+	;
+param ::= 
+	ID:t TDOT stype:s		{:	System.err.printf("*** param \n"); RESULT = s;:}
+	|ID:t TDOT ctype:c 		{:	System.err.printf("*** param \n"); RESULT = c;:}
+	;
+stype ::=
+	INTEGER			
+	|FLOAT
+	|STRING
+	|CHARACTER
+	|BOOLEAN
+	;
+ctype ::=
+	LIST OF stype:t				{: System.err.printf("*** ctype \n"); RESULT = t; :}
+	|LIST OF STRUCTURE strc:t	{: System.err.printf("*** ctype \n"); RESULT = t; :}
+	|STRUCTURE strc:t			{: System.err.printf("*** ctype \n"); RESULT = t; :}
+	;
+strc ::=
+	LCRO decls:d RCRO		{: System.err.printf("*** strc \n"); RESULT = d; :}
 	;	
-		
 instrs ::=
-	instrs:t inst:i  	{: System.err.printf("*** instrs \n" ); :}
-	|inst:i							{:	System.err.printf("*** inst \n"); RESULT = i;	:}
+	instrs:t inst:i  	{: System.err.printf("*** instrs \n" ); RESULT = i; :}
+	|inst:i				{:	System.err.printf("*** inst \n"); RESULT = i; :}
 	;
 	
 inst ::= 
-	expr:t SEMIC			{: System.err.printf("*** inst \n"); RESULT = t; :} 
-	|stm:t SEMIC			{: System.err.printf("*** stm\n"); RESULT = t; :}
+	expr:t SEMIC		{: System.err.printf("*** inst \n"); RESULT = t; :} 
+	|stm:t SEMIC		{: System.err.printf("*** stm\n"); RESULT = t; :}
 	;
 
 stm ::=
-	lhs:e1 AFF rhs:e2		{: System.err.printf("*** stm\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
+	lhs:e1 AFF rhs:e2					{: System.err.printf("*** stm\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
 	|IF exprl:e stm:i1 THENELSE stm:i2  {: /* RESULT = new SyntAbstr(e, EnumTag.IF, new SyntAbstr(i1, i2, EnumTag.THENELSE));*/  :}
-	|IF exprl:e stm:i  {:  RESULT = new SyntAbstr(e, i, EnumTag.IF); :} /*%prec IF_WITHOUT_ELSE*/
-	|WHILE exprl:e stm:i {:  RESULT =  new SyntAbstr(e, i, EnumTag.WHILE); :}
-	|expr:e1 EQ expr:e2 SEMIC {:  RESULT = new SyntAbstr(e1, e2, EnumTag.EQ);:}
+	|IF exprl:e stm:i  					{:  RESULT = new SyntAbstr(e, i, EnumTag.IF); :} /*%prec IF_WITHOUT_ELSE*/
+	|WHILE exprl:e stm:i 				{:  RESULT =  new SyntAbstr(e, i, EnumTag.WHILE); :}
+	|FOREACH ID:t IN list:l stm:i 		{:  RESULT = i;:}
+	|REPEAT stm:t WHILE exprl:e 
+	|RETURN ID:i
+	|RETURN expr:e
 	;
-		 
-rhs::= 
+list ::=	
+	 LBRACKET nbr:n RBRACKET	{: System.err.printf("*** LIST \n"); RESULT = n; :}
+	 ;
+nbr ::=
+	INTEGER:str COMMA nbr:n		{: System.err.printf("*** nbr \n"); RESULT = n; :}
+	|INTEGER:str				{: System.err.printf("*** integer \n"); :}
+	;
+rhs ::= 
 	expr:e					{: System.err.printf("*** rhs\n");RESULT = e; :}
 	;	
-lhs::=
+lhs ::=
 	ID:t					{: System.err.printf("*** lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);:}
 	;
 expr ::=

@@ -2,13 +2,21 @@
 ***Variable: argn ***Line: 0  ***Col: 17
 ***Variable: argc ***Line: 0  ***Col: 34
 ***Keyword: RPAR ***Line: 0  ***Col: 56
-***Variable: argn ***Line: 5  ***Col: 1
-***Keyword: AFF ***Line: 5  ***Col: 6
+***Variable: i ***Line: 3  ***Col: 0
+***Keyword: SEMIC ***Line: 3  ***Col: 11
+***Variable: argn ***Line: 5  ***Col: 0
+*** decl 
+*** decls 
+***Keyword: AFF ***Line: 5  ***Col: 5
 *** lhs
-***Integer: 10 ***Line: 5  ***Col: 8
+***Integer: 10 ***Line: 5  ***Col: 7
 ***Keyword: SEMIC ***Line: 5  ***Col: 10
-***expr 	Line:5  Col:8 
+***expr 	Line:5  Col:7 
 *** rhs
 *** stm
+***Variable: l1 ***Line: 7  ***Col: 0
 *** stm
-***programme principal 
+*** inst 
+syntax error in 8(3)
+error in line 7: Couldn't repair and continue parse
+parse error...

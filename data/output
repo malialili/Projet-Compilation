@@ -8,4 +8,6 @@ KEYWORD: list
 KEYWORD: of
 KEYWORD: string
 OPERATOR: {
-OPERATOR: }
+OPERATOR: :
+KEYWORD: integer
+OPERATOR: :
