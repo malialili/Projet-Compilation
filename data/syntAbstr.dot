@@ -1,6 +1,10 @@
-digraph ArbreSyntAbstr {2 [label="AFF:"];
+digraph ArbreSyntAbstr {4 [label="AFF:"];
 0 [label="ID:"];
-2 -> 0 [label=""];
-1 [label="INTEGER:"];
-2 -> 1 [label=""];
+4 -> 0 [label=""];
+3 [label="PLUS:"];
+1 [label="ID:"];
+3 -> 1 [label=""];
+2 [label="INTEGER:"];
+3 -> 2 [label=""];
+4 -> 3 [label=""];
 }

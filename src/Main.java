@@ -26,6 +26,10 @@ public class Main {
 					SyntAbstr root=(SyntAbstr)result.value;
 					// On produit data/arbreSynt.dot, l'arbre de syntaxe abstraite en dot (graphviz)
 					root.toDot("data/syntAbstr");
+					/*
+					 //tree.toDot(args[1]);
+		    		tree.toStm().toDot(args[1]);
+					 * */
 				}
 				catch (Exception e) {
 					System.err.println("semantic error...");

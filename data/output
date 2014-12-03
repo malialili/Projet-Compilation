@@ -11,3 +11,7 @@ OPERATOR: {
 OPERATOR: :
 KEYWORD: integer
 OPERATOR: :
+KEYWORD: list
+KEYWORD: of
+KEYWORD: integer
+OPERATOR: }

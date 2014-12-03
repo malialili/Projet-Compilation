@@ -22,4 +22,9 @@ public class StreeIDENTIFIER extends Stree {
 	super(EnumTag.IDENTIFIER, null, null, null);
     }
     
+    /*
+    public Exp toExp(){
+    	return new TEMP(new Temp());
+    }
+     */
 }

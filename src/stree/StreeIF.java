@@ -31,7 +31,8 @@ public class StreeIF extends Stree {
 					   new LABEL(l2))));
     }
 
-   /* public Stm build(){
+   /* 
+    public Stm build(){
 	Exp e1 = getLeft().build();
 	Exp e2 = new CONST(0);
 	Stm st1 = getRight().getLeft().build();
@@ -42,4 +43,65 @@ public class StreeIF extends Stree {
 	
 	return build(CJUMP.NE,e1,e2,st1,st2);
     }*/
+    
+    
+    
+    /*
+     private static Stm build(int rel, Exp e1, Exp e2, Stm st1,Stm st2){
+		Label L1=new Label();
+		Label L2=new Label();
+		Label end=new Label("end");	
+		SEQ s= new SEQ(new CJUMP(rel,e1,e2,L1,L2), 
+				new SEQ(new LABEL(L1), 
+						new SEQ(st1,
+								new SEQ(new JUMP(end),
+										new SEQ(new LABEL(L2),
+												new SEQ(st2,
+														new LABEL(end
+																)))))));
+
+		return s;
+
+	}
+
+	private static Stm build(int rel, Exp e1, Exp e2, Stm st1){
+		Label L1=new Label();
+		Label end=new Label("end");	
+		SEQ s= new SEQ(new CJUMP(rel,e1,e2,L1,end), 
+				new SEQ(new LABEL(L1), 
+						new SEQ(st1,
+								new LABEL(end)
+											)));
+
+		return s;
+
+	}
+
+	public Stm toStm(){
+		int rel = 0;
+		switch(left.getTag()){
+			case EQ: rel=CJUMP.EQ;break;
+			case LT: rel=CJUMP.LT;break;
+			case GE: rel=CJUMP.GE;break;
+			case GT: rel=CJUMP.GT;break;
+			case LE: rel=CJUMP.LE;break;
+			case DIFF: rel=CJUMP.NE;break;
+		default: try {
+				throw new Exception("bad relop in stren");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Exp e1= left.getLeft().toExp();
+		Exp e2= left.getRight().toExp();
+		Stm st1= right.getLeft().toStm();
+		if(right.getRight()==null)
+			return StreeIF.build(rel, e1, e2, st1);
+		Stm st2= right.getRight().toStm();
+		return StreeIF.build(rel, e1, e2, st1, st2);
+
+	}
+
+     */
 }

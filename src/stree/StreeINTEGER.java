@@ -10,5 +10,9 @@ public class StreeINTEGER extends Stree {
     public StreeINTEGER(Object object){
 	super(EnumTag.INTEGER, null, null, object);
     }
-    
+    /*
+     public Exp toExp(){
+    	return new CONST((int)this.getObject());
+    }
+     */
 }

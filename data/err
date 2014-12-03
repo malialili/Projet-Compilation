@@ -4,19 +4,27 @@
 ***Keyword: RPAR ***Line: 0  ***Col: 56
 ***Variable: i ***Line: 3  ***Col: 0
 ***Keyword: SEMIC ***Line: 3  ***Col: 11
-***Variable: argn ***Line: 5  ***Col: 0
+***Variable: l1 ***Line: 4  ***Col: 0
 *** decl 
 *** decls 
-***Keyword: AFF ***Line: 5  ***Col: 5
+***Keyword: SEMIC ***Line: 4  ***Col: 20
+*** ctype 
+***Variable: argn ***Line: 6  ***Col: 0
+*** decl 
+*** decls 
+***Keyword: AFF ***Line: 6  ***Col: 5
 *** lhs
-***Integer: 10 ***Line: 5  ***Col: 7
-***Keyword: SEMIC ***Line: 5  ***Col: 10
-***expr 	Line:5  Col:7 
+***Variable: i ***Line: 6  ***Col: 7
+***Keyword: PLUS ***Line: 6  ***Col: 9
+***expr	Line:6  Col:7 
+***Integer: 10 ***Line: 6  ***Col: 11
+***Keyword: SEMIC ***Line: 6  ***Col: 14
+***expr 	Line:6  Col:11 
+***expr	Line:6  Col:7 
 *** rhs
 *** stm
-***Variable: l1 ***Line: 7  ***Col: 0
 *** stm
 *** inst 
-syntax error in 8(3)
-error in line 7: Couldn't repair and continue parse
-parse error...
+*** bloc 
+*** pprog 
+***axiom 

@@ -75,8 +75,7 @@ non terminal SyntAbstr fcts, fct, params, param, list, nbr;
 
 precedence nonassoc THENELSE;
 precedence nonassoc IF;
-precedence left AND;
-precedence left OR;
+precedence left AND, LAND, OR, LOR, EQ;
 precedence left LT, GT, LE, GE, AFF, DIFF;
 precedence left PLUS, MINUS;
 precedence left MULT, DIV, MOD;
@@ -157,9 +156,8 @@ stm ::=
 	|IF exprl:e stm:i  					{:  RESULT = new SyntAbstr(e, i, EnumTag.IF); :} /*%prec IF_WITHOUT_ELSE*/
 	|WHILE exprl:e stm:i 				{:  RESULT =  new SyntAbstr(e, i, EnumTag.WHILE); :}
 	|FOREACH ID:t IN list:l stm:i 		{:  RESULT = i;:}
-	|REPEAT stm:t WHILE exprl:e 
-	|RETURN ID:i
-	|RETURN expr:e
+	|REPEAT stm:t WHILE exprl:e 		{:  RESULT = e;:}
+	|RETURN expr:e						{:  RESULT = e;:}
 	;
 list ::=	
 	 LBRACKET nbr:n RBRACKET	{: System.err.printf("*** LIST \n"); RESULT = n; :}
@@ -169,28 +167,33 @@ nbr ::=
 	|INTEGER:str				{: System.err.printf("*** integer \n"); :}
 	;
 rhs ::= 
-	expr:e					{: System.err.printf("*** rhs\n");RESULT = e; :}
+	expr:e	{: System.err.printf("*** rhs\n");RESULT = e; :}
 	;	
 lhs ::=
-	ID:t					{: System.err.printf("*** lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);:}
+	ID:t	{: System.err.printf("*** lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);:}
 	;
 expr ::=
 	expr:e1 PLUS expr:e2	{: System.err.printf("***expr	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.PLUS); :} 
 	|expr:e1 MINUS expr:e2	{: System.err.printf("***expr  	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MINUS); :} 
 	|expr:e1 MULT expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MULT); :} 
 	|expr:e1 DIV expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.DIV); :} 
+	|expr:e1 MOD expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MOD); :} 
 	|LPAR expr:e RPAR		{: System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright); RESULT = e; :} 
-	|MINUS expr:e 			{: System.err.printf("***expr  	Line:%d  Col:%d \n", eleft, eright);	RESULT = new SyntAbstr(e, EnumTag.MINUS_U); :} %prec MINUS_U
+	|MINUS expr:e 			{: System.err.printf("***expr  	Line:%d  Col:%d \n", eleft, eright); RESULT = new SyntAbstr(e, EnumTag.MINUS_U); :} %prec MINUS_U
 	|INTEGER:str			{: System.err.printf("***expr 	Line:%d  Col:%d \n", strleft, strright); RESULT = new SyntAbstr(EnumTag.INTEGER, str); :}
+	|ID:t					{: System.err.printf("***expr	Line:%d  Col:%d \n", tleft, tright); RESULT = new SyntAbstr(EnumTag.ID, t);:}
 	;
 
 exprl ::=
-	exprl:e1 AND exprl:e2	{: System.err.printf("***expr	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.AND); :} 
-	|expr:e1 OR expr:e2		{: System.err.printf("***expr  	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.OR); :} 
-	|NOT exprl:e			{: System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright); RESULT = new SyntAbstr(e, EnumTag.NOT); :}  %prec NOT
-	|expr:e1 LAND expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LAND); :} 
-	|expr:e1 LOR expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LOR); :} 
-	|expr:e1 EQ expr:e2		{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.EQ); :} 
-	|LPAR exprl:e RPAR		{: System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright); RESULT = e; :} 
+	exprl:e1 AND exprl:e2	{: System.err.printf("***exprl	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.AND); :} 
+	|exprl:e1 OR exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.OR); :} 
+	|exprl:e1 LAND exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LAND); :} 
+	|exprl:e1 LOR exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LOR); :} 
+	|exprl:e1 EQ exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.EQ); :} 
+	|exprl:e1 DIFF exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.DIFF); :} 
+	|LPAR exprl:e RPAR		{: System.err.printf("***exprl  Line:%d  Col:%d \n",   eleft, eright); RESULT = e; :} 
+	|NOT exprl:e			{: System.err.printf("***exprl  Line:%d  Col:%d \n",   eleft, eright); RESULT = new SyntAbstr(e, EnumTag.NOT); :}  %prec NOT
+	|TRUE:str				{: System.err.printf("***exprl 	Line:%d  Col:%d \n", strleft, strright); :}
+	|FALSE:str				{: System.err.printf("***exprl 	Line:%d  Col:%d \n", strleft, strright); :}
 	;
 	
