@@ -1,10 +1,10 @@
-digraph ArbreSyntAbstr {4 [label="AFF:"];
-0 [label="ID:"];
-4 -> 0 [label=""];
-3 [label="PLUS:"];
-1 [label="ID:"];
-3 -> 1 [label=""];
-2 [label="INTEGER:"];
-3 -> 2 [label=""];
-4 -> 3 [label=""];
+digraph ArbreSyntAbstr {20 [label="WHILE:"];
+18 [label="EQ:"];
+16 [label="ID:"];
+18 -> 16 [label=""];
+17 [label="ID:"];
+18 -> 17 [label=""];
+20 -> 18 [label=""];
+19 [label="FUNCTION:"];
+20 -> 19 [label=""];
 }

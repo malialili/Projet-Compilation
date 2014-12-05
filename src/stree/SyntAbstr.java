@@ -131,6 +131,11 @@ public class SyntAbstr {
 		case LIST: result += "LIST"; break;
 		case OF: result += "OF"; break;
 		case IN: result += "IN"; break;
+		case IF: result += "IF"; break;
+		case ELSE: result += "ELSE"; break;
+		case TRUE: result += "TRUE"; break;
+		case FALSE: result += "FALSE"; break;
+		case WHILE: result += "WHILE"; break;
 		case CLASS: result += "CLASS"; break;
 		case STRUCTURE: result += "STRUCTURE"; break;
 		case TYPE: result += "TYPE"; break;

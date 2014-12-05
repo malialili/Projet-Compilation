@@ -3,6 +3,8 @@ import java.util.Vector;
 import java.io.*;
 import java.lang.*;
 import stree.*;
+import type.*;
+import env.*;
 
 /*parser code {:
      
@@ -62,19 +64,23 @@ init with {:
 
 terminal PROCEDURE, MAIN, LPAR, RPAR, SEMIC, PLUS, MINUS, MINUS_U, MULT, DIV, MOD, AFF, OF, TDOT, COMMA, LIST ;
 terminal LCRO, RCRO, LT, GT, LE, GE, NOT, NE, DIFF, LBRACKET, RBRACKET, ARROW, DOT;
-terminal EQ, AND, OR, LAND, LOR, VIR, PLUSS, MINUSS, CIRCUMFLEX;
-terminal RETURN, STRUCTURE, IN, IF, THENELSE, WHILE, TRUE, FALSE, FUNCTION, TYPE, CLASS, NULL, FOREACH, REPEAT;
+terminal EQ, AND, OR, LAND, LOR, VIR, PLUSS, MINUSS, CIRCUMFLEX, IF_WITHOUT_ELSE;
+terminal RETURN, STRUCTURE, IN, IF, ELSE, WHILE, FUNCTION, TYPE, CLASS, NULL, FOREACH, REPEAT;
+
 terminal String INTEGER, FLOAT, STRING_LITERAL;
-terminal String ID;
+terminal String TRUE, FALSE, ID;
 terminal String STRING, BOOLEAN, CHARACTER;
 
 /* The grammar */
 non terminal  axiom;
-non terminal SyntAbstr expr, stm, lhs, rhs, bloc, inst, instrs, decls, decl, stype, ctype, strc, var, pprog, exprl;
-non terminal SyntAbstr fcts, fct, params, param, list, nbr;
+non terminal SyntAbstr expr, stm, lhs, rhs, bloc, inst, instrs, var, decls, decl, stype, ctype, strc, pprog, exprl;
+non terminal SyntAbstr fcts, fct, params, param, list, nbr, vars;
 
-precedence nonassoc THENELSE;
-precedence nonassoc IF;
+
+
+
+precedence nonassoc IF_WITHOUT_ELSE;
+precedence nonassoc ELSE;
 precedence left AND, LAND, OR, LOR, EQ;
 precedence left LT, GT, LE, GE, AFF, DIFF;
 precedence left PLUS, MINUS;
@@ -97,9 +103,10 @@ pprog ::=
 	;
 fcts::=
 	fcts:f fct:t 		{: System.err.printf("*** fcts \n"); RESULT = t; :}
+	|fct:t				{: System.err.printf("*** fcts \n"); RESULT = t; :}
 	;	
 fct ::=
-	FUNCTION params:p bloc:b  		{: System.err.printf("*** FUNCTION \n"); RESULT = b; :}
+	FUNCTION ID params:p bloc:b  		{: System.err.printf("*** FUNCTION \n"); RESULT = b; :}
 	|PROCEDURE params:p bloc:b 		{: System.err.printf("*** PROCEDURE \n"); RESULT = b; :}
 	;		
 bloc ::= 
@@ -112,30 +119,40 @@ decls ::=
 	 |decl:d 					{:	System.err.printf("*** decls \n"); RESULT = d;:}
 	 ;	 
 decl ::= 
-	ID:t TDOT stype:s SEMIC					{:	System.err.printf("*** decl \n"); RESULT = s;:}
-	|ID:t TDOT ctype:c SEMIC				{:	System.err.printf("*** decl \n"); RESULT = c;:}
+	var:t TDOT stype:s SEMIC				{:	System.err.printf("*** decl \n"); RESULT = s; :}
+	|var:t TDOT ctype:c SEMIC				{:	System.err.printf("*** decl \n"); RESULT = c;:}
 	|FUNCTION params:p TDOT stype:s SEMIC	{:	System.err.printf("*** decl \n"); RESULT = s;:}
 	|PROCEDURE params:p SEMIC				{:	System.err.printf("*** decl \n"); RESULT = p;:}
 	;
+	
 params ::=
 	LPAR params:s COMMA param:p RPAR	{:	System.err.printf("*** params \n"); RESULT = s;:}
 	|LPAR param:p RPAR					{:	System.err.printf("*** params \n"); RESULT = p;:}			
 	;
 param ::= 
-	ID:t TDOT stype:s		{:	System.err.printf("*** param \n"); RESULT = s;:}
-	|ID:t TDOT ctype:c 		{:	System.err.printf("*** param \n"); RESULT = c;:}
+	var:t TDOT stype:s			{:	System.err.printf("*** param \n"); RESULT = s;:}
+	|var:t TDOT ctype:c 		{:	System.err.printf("*** param \n"); RESULT = c;:}
 	;
+vars::=
+	vars:v COMMA var:s		{:	System.err.printf("*** param \n"); RESULT = v;:}
+	|var:v					{:	System.err.printf("*** param \n"); RESULT = v;:}
+	;
+var::=
+	ID					{:	System.err.printf("*** var \n"); new Type(EnumType.VARIABLE);:}	
+	|CIRCUMFLEX ID		{:	System.err.printf("*** var \n"); new Type(EnumType.VARIABLE);:}
+	;
+	
 stype ::=
-	INTEGER			
-	|FLOAT
-	|STRING
-	|CHARACTER
-	|BOOLEAN
+	INTEGER			{: new Type(EnumType.INTEGER);:}
+	|FLOAT			{: new Type(EnumType.FLOAT);:}
+	|STRING			{: new Type(EnumType.STRING);:}
+	|CHARACTER		{: new Type(EnumType.CHARACTER);:}	
+	|BOOLEAN		{: new Type(EnumType.BOOLEAN);:}
 	;
 ctype ::=
-	LIST OF stype:t				{: System.err.printf("*** ctype \n"); RESULT = t; :}
-	|LIST OF STRUCTURE strc:t	{: System.err.printf("*** ctype \n"); RESULT = t; :}
-	|STRUCTURE strc:t			{: System.err.printf("*** ctype \n"); RESULT = t; :}
+	LIST OF stype:t				{:new Type(EnumType.LIST); System.err.printf("*** ctype \n"); RESULT = t; :}
+	|LIST OF STRUCTURE strc:t	{:new Type(EnumType.LIST); System.err.printf("*** ctype \n"); RESULT = t; :}
+	|STRUCTURE strc:t			{:new Type(EnumType.STRUCTURE); System.err.printf("*** ctype \n"); RESULT = t; :}
 	;
 strc ::=
 	LCRO decls:d RCRO		{: System.err.printf("*** strc \n"); RESULT = d; :}
@@ -147,45 +164,65 @@ instrs ::=
 	
 inst ::= 
 	expr:t SEMIC		{: System.err.printf("*** inst \n"); RESULT = t; :} 
-	|stm:t SEMIC		{: System.err.printf("*** stm\n"); RESULT = t; :}
+	|stm:t 				{: System.err.printf("*** stm\n"); RESULT = t; :}
 	;
 
 stm ::=
 	lhs:e1 AFF rhs:e2					{: System.err.printf("*** stm\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
-	|IF exprl:e stm:i1 THENELSE stm:i2  {: /* RESULT = new SyntAbstr(e, EnumTag.IF, new SyntAbstr(i1, i2, EnumTag.THENELSE));*/  :}
-	|IF exprl:e stm:i  					{:  RESULT = new SyntAbstr(e, i, EnumTag.IF); :} /*%prec IF_WITHOUT_ELSE*/
+	|IF exprl:e stm:i1 ELSE stm:i2  	{: System.err.printf("*** ELSE \n"); RESULT = new SyntAbstr(e, new SyntAbstr(i1, i2, EnumTag.ELSE ), EnumTag.IF);:}	
+	|IF exprl:e stm:i  					{: System.err.printf("*** IF \n");   RESULT = new SyntAbstr(e, i, EnumTag.IF); :} %prec IF_WITHOUT_ELSE
 	|WHILE exprl:e stm:i 				{:  RESULT =  new SyntAbstr(e, i, EnumTag.WHILE); :}
 	|FOREACH ID:t IN list:l stm:i 		{:  RESULT = i;:}
 	|REPEAT stm:t WHILE exprl:e 		{:  RESULT = e;:}
-	|RETURN expr:e						{:  RESULT = e;:}
+	|ID LPAR vars:s RPAR SEMIC			{:  RESULT = new SyntAbstr(s, EnumTag.FUNCTION); :}
+	|RETURN expr:e	SEMIC				{:  RESULT = e;:}
 	;
 list ::=	
 	 LBRACKET nbr:n RBRACKET	{: System.err.printf("*** LIST \n"); RESULT = n; :}
 	 ;
 nbr ::=
-	INTEGER:str COMMA nbr:n		{: System.err.printf("*** nbr \n"); RESULT = n; :}
-	|INTEGER:str				{: System.err.printf("*** integer \n"); :}
+	INTEGER:str COMMA nbr:n		{: System.err.printf("*** nbr \n"); RESULT = n; new Type(EnumType.INTEGER); :}
+	|INTEGER:str				{: System.err.printf("*** integer \n"); new Type(EnumType.INTEGER); :}
 	;
 rhs ::= 
-	expr:e	{: System.err.printf("*** rhs\n");RESULT = e; :}
+	expr:e	SEMIC	{: System.err.printf("*** rhs\n");RESULT = e; :}
 	;	
 lhs ::=
-	ID:t	{: System.err.printf("*** lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);:}
+	ID:t	{: System.err.printf("*** lhs\n"); RESULT = new SyntAbstr(EnumTag.ID, t);
+				new Type(EnumType.VARIABLE);
+			:}
 	;
 expr ::=
-	expr:e1 PLUS expr:e2	{: System.err.printf("***expr	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.PLUS); :} 
+	expr:e1 PLUS expr:e2	{: System.err.printf("***expr	Line:%d  Col:%d \n", e1left, e1right); 
+								RESULT = new SyntAbstr(e1, e2, EnumTag.PLUS); 
+								System.out.printf(" "+e1.getType());
+								
+								/*if ( (e1.getType() == INTEGER) && (e2.getType()==INTEGER) )
+									RESULT.putType(INTEGER);
+								else if ( e1.getType() == FLOAT || e2.getType() == FLOAT )
+									RESULT.putType( FLOAT );
+								else RESULT.putType( ERROR );	*/
+						
+								:} 
 	|expr:e1 MINUS expr:e2	{: System.err.printf("***expr  	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MINUS); :} 
 	|expr:e1 MULT expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MULT); :} 
 	|expr:e1 DIV expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.DIV); :} 
 	|expr:e1 MOD expr:e2	{: System.err.printf("***expr   Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.MOD); :} 
 	|LPAR expr:e RPAR		{: System.err.printf("***expr   Line:%d  Col:%d \n", eleft, eright); RESULT = e; :} 
 	|MINUS expr:e 			{: System.err.printf("***expr  	Line:%d  Col:%d \n", eleft, eright); RESULT = new SyntAbstr(e, EnumTag.MINUS_U); :} %prec MINUS_U
-	|INTEGER:str			{: System.err.printf("***expr 	Line:%d  Col:%d \n", strleft, strright); RESULT = new SyntAbstr(EnumTag.INTEGER, str); :}
-	|ID:t					{: System.err.printf("***expr	Line:%d  Col:%d \n", tleft, tright); RESULT = new SyntAbstr(EnumTag.ID, t);:}
+	|INTEGER:str			{: System.err.printf("***expr 	Line:%d  Col:%d \n", strleft, strright); 
+								RESULT = new SyntAbstr(EnumTag.INTEGER, str);
+								new Type(EnumType.INTEGER);
+							:}
+	|ID:t					{: System.err.printf("***expr	Line:%d  Col:%d \n", tleft, tright); RESULT = new SyntAbstr(EnumTag.ID, t);
+								new Type(EnumType.VARIABLE);
+							:}
 	;
 
 exprl ::=
-	exprl:e1 AND exprl:e2	{: System.err.printf("***exprl	Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.AND); :} 
+	exprl:e1 AND exprl:e2  {: System.err.printf("***exprl	Line:%d  Col:%d \n", e1left, e1right); 
+								RESULT = new SyntAbstr(e1, e2, EnumTag.AND); 
+							:} 
 	|exprl:e1 OR exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.OR); :} 
 	|exprl:e1 LAND exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LAND); :} 
 	|exprl:e1 LOR exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.LOR); :} 
@@ -193,7 +230,36 @@ exprl ::=
 	|exprl:e1 DIFF exprl:e2	{: System.err.printf("***exprl  Line:%d  Col:%d \n", e1left, e1right); RESULT = new SyntAbstr(e1, e2, EnumTag.DIFF); :} 
 	|LPAR exprl:e RPAR		{: System.err.printf("***exprl  Line:%d  Col:%d \n",   eleft, eright); RESULT = e; :} 
 	|NOT exprl:e			{: System.err.printf("***exprl  Line:%d  Col:%d \n",   eleft, eright); RESULT = new SyntAbstr(e, EnumTag.NOT); :}  %prec NOT
-	|TRUE:str				{: System.err.printf("***exprl 	Line:%d  Col:%d \n", strleft, strright); :}
-	|FALSE:str				{: System.err.printf("***exprl 	Line:%d  Col:%d \n", strleft, strright); :}
+	|TRUE:str				{: System.err.printf("***exprl 	Line:%d  Col:%d \n", strleft, strright); RESULT = new SyntAbstr(EnumTag.TRUE, str);:}
+	|FALSE:str				{: System.err.printf("***exprl 	Line:%d  Col:%d \n", strleft, strright); RESULT = new SyntAbstr(EnumTag.FALSE, str);:}
+	|ID:t					{: System.err.printf("***exprl	Line:%d  Col:%d \n", tleft, tright); RESULT = new SyntAbstr(EnumTag.ID, t);
+								new Type(EnumType.VARIABLE);
+							:}
 	;
 	
+	
+	
+	/*
+inst ::= 
+	expr:t SEMIC		{: System.err.printf("*** inst \n"); RESULT = t; :} 
+	|stm:t SEMIC		{: System.err.printf("*** stm\n"); RESULT = t; :}
+	|cond:c				{:  RESULT = c;:}
+	|boucl:b			{:  RESULT = b;:}
+	;
+
+stm ::=
+	lhs:e1 AFF rhs:e2					{: System.err.printf("*** AFF\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
+	|RETURN expr:e						{:  RESULT = e;:}
+	;
+	
+cond ::=
+	IF exprl:e stm:i1 ELSE stm:i2  	{: System.err.printf("*** ELSE \n");  RESULT = new SyntAbstr( new SyntAbstr(e, i1, EnumTag.IF), i2, EnumTag.ELSE ); :}	
+	|IF exprl:e stm:i  					{: System.err.printf("*** IF \n");   RESULT = new SyntAbstr(e, i, EnumTag.IF); :} %prec IF_WITHOUT_ELSE
+	;
+	
+boucl::=
+	WHILE exprl:e stm:i 				{:  RESULT =  new SyntAbstr(e, i, EnumTag.WHILE); :}
+	|FOREACH ID:t IN list:l stm:i 		{:  RESULT = i;:}
+	|REPEAT stm:t WHILE exprl:e 		{:  RESULT = e;:}
+	;
+	*/

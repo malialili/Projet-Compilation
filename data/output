@@ -1,3 +1,10 @@
+KEYWORD: function
+OPERATOR: :
+KEYWORD: integer
+OPERATOR: {
+OPERATOR: :
+KEYWORD: integer
+ nullOPERATOR: }
 KEYWORD: procedure
 KEYWORD: main
 OPERATOR: :
@@ -14,4 +21,9 @@ OPERATOR: :
 KEYWORD: list
 KEYWORD: of
 KEYWORD: integer
+KEYWORD: if
+KEYWORD: true
+ nullKEYWORD: else
+KEYWORD: while
+OPERATOR: ==
 OPERATOR: }

@@ -58,6 +58,9 @@ public class Type {
 		this.right = right;
 	}
 
+	public EnumType getType(){
+		return type;
+	}
 	public void putType(EnumType type){
 		this.type=type;
 	}

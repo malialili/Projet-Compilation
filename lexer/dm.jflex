@@ -94,7 +94,7 @@ IDENTIFIER		=[a-zA-Z]([a-zA-z0-9]|'_')*
 					return symbol(DmSymbol.IF, yytext());}
 					
 	else 		{System.out.println("KEYWORD: " +  yytext());
-					return symbol(DmSymbol.THENELSE, yytext());}
+					return symbol(DmSymbol.ELSE, yytext());}
 					
 	while		{System.out.println("KEYWORD: " +  yytext());
 					return symbol(DmSymbol.WHILE, yytext());}

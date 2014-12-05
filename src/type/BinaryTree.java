@@ -1,4 +1,4 @@
-package stree;
+package type;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.lang.Process;
 import java.util.Vector;
 
 import tree.*;
-import type.*;
+import stree.*;
 import env.*;
 
 // Arbre Binaire de recherche

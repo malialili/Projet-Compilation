@@ -1,11 +1,19 @@
+function f(var : integer)
+{
+	i: integer;
+	i=i+10;
+}
 procedure main ( argn : integer , argc : list of string )
 {
 
 i : integer;
 l1 : list of integer;
 
-argn = i + 10 ;
-
-
-
+if(true) 
+	argn = 10 + 10;
+else argn = 10;	
+	
+while (argn == i)
+	f(i);
+		
 }

@@ -8,7 +8,7 @@ public enum EnumType {
 	// type constant pour les slots
 	CONSTANT,
 	// types complexes
-	POINTER, FUNCTION, TIMES, 
+	POINTER, FUNCTION, TIMES, STRUCTURE,
 	// types complexes
 	RECORD, LIST, ARRAY, STACK, SET, 
 	// erreur de type

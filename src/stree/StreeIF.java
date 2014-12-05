@@ -30,6 +30,7 @@ public class StreeIF extends Stree {
 				   new SEQ(st1, 
 					   new LABEL(l2))));
     }
+    
 
    /* 
     public Stm build(){

@@ -1,30 +1,91 @@
-***Keyword: LPAR ***Line: 0  ***Col: 15
-***Variable: argn ***Line: 0  ***Col: 17
-***Variable: argc ***Line: 0  ***Col: 34
-***Keyword: RPAR ***Line: 0  ***Col: 56
-***Variable: i ***Line: 3  ***Col: 0
-***Keyword: SEMIC ***Line: 3  ***Col: 11
-***Variable: l1 ***Line: 4  ***Col: 0
+***Variable: f ***Line: 0  ***Col: 9
+***Keyword: LPAR ***Line: 0  ***Col: 10
+***Variable: var ***Line: 0  ***Col: 11
+*** var 
+***Keyword: RPAR ***Line: 0  ***Col: 24
+*** param 
+*** params 
+***Variable: i ***Line: 2  ***Col: 1
+*** var 
+***Keyword: SEMIC ***Line: 2  ***Col: 11
+***Variable: i ***Line: 3  ***Col: 1
 *** decl 
 *** decls 
-***Keyword: SEMIC ***Line: 4  ***Col: 20
-*** ctype 
-***Variable: argn ***Line: 6  ***Col: 0
-*** decl 
-*** decls 
-***Keyword: AFF ***Line: 6  ***Col: 5
+***Keyword: AFF ***Line: 3  ***Col: 2
 *** lhs
-***Variable: i ***Line: 6  ***Col: 7
-***Keyword: PLUS ***Line: 6  ***Col: 9
-***expr	Line:6  Col:7 
-***Integer: 10 ***Line: 6  ***Col: 11
-***Keyword: SEMIC ***Line: 6  ***Col: 14
-***expr 	Line:6  Col:11 
-***expr	Line:6  Col:7 
+***Variable: i ***Line: 3  ***Col: 3
+***Keyword: PLUS ***Line: 3  ***Col: 4
+***expr	Line:3  Col:3 
+***Integer: 10 ***Line: 3  ***Col: 5
+***Keyword: SEMIC ***Line: 3  ***Col: 7
+***expr 	Line:3  Col:5 
+***expr	Line:3  Col:3 
 *** rhs
 *** stm
 *** stm
 *** inst 
+*** bloc 
+*** FUNCTION 
+*** fcts 
+***Keyword: LPAR ***Line: 5  ***Col: 15
+***Variable: argn ***Line: 5  ***Col: 17
+***Variable: argc ***Line: 5  ***Col: 34
+***Keyword: RPAR ***Line: 5  ***Col: 56
+***Variable: i ***Line: 8  ***Col: 0
+*** var 
+***Keyword: SEMIC ***Line: 8  ***Col: 11
+***Variable: l1 ***Line: 9  ***Col: 0
+*** decl 
+*** decls 
+*** var 
+***Keyword: SEMIC ***Line: 9  ***Col: 20
+*** ctype 
+*** decl 
+*** decls 
+***Keyword: LPAR ***Line: 11  ***Col: 2
+***Keyword: RPAR ***Line: 11  ***Col: 7
+***exprl 	Line:11  Col:3 
+***Variable: argn ***Line: 12  ***Col: 1
+***exprl  Line:11  Col:3 
+***Keyword: AFF ***Line: 12  ***Col: 6
+*** lhs
+***Integer: 10 ***Line: 12  ***Col: 8
+***Keyword: PLUS ***Line: 12  ***Col: 11
+***expr 	Line:12  Col:8 
+***Integer: 10 ***Line: 12  ***Col: 13
+***Keyword: SEMIC ***Line: 12  ***Col: 15
+***expr 	Line:12  Col:13 
+***expr	Line:12  Col:8 
+*** rhs
+*** stm
+***Variable: argn ***Line: 13  ***Col: 5
+***Keyword: AFF ***Line: 13  ***Col: 10
+*** lhs
+***Integer: 10 ***Line: 13  ***Col: 12
+***Keyword: SEMIC ***Line: 13  ***Col: 14
+***expr 	Line:13  Col:12 
+*** rhs
+*** stm
+*** ELSE 
+*** stm
+*** inst 
+***Keyword: LPAR ***Line: 15  ***Col: 6
+***Variable: argn ***Line: 15  ***Col: 7
+***exprl	Line:15  Col:7 
+***Variable: i ***Line: 15  ***Col: 15
+***Keyword: RPAR ***Line: 15  ***Col: 16
+***exprl	Line:15  Col:15 
+***exprl  Line:15  Col:7 
+***Variable: f ***Line: 16  ***Col: 1
+***exprl  Line:15  Col:15 
+***Keyword: LPAR ***Line: 16  ***Col: 2
+***Variable: i ***Line: 16  ***Col: 3
+***Keyword: RPAR ***Line: 16  ***Col: 4
+*** var 
+*** param 
+***Keyword: SEMIC ***Line: 16  ***Col: 5
+*** stm
+*** instrs 
 *** bloc 
 *** pprog 
 ***axiom 

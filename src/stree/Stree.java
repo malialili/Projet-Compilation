@@ -56,7 +56,7 @@ public class Stree {
 	    	result += left.toString();
 	    if (right != null){
                 result+=",";
-                if (right.tag==EnumTag.SUCC || right.tag==EnumTag.THENELSE)
+                if (right.tag==EnumTag.SUCC || right.tag==EnumTag.ELSE)
                     result+="\n\n\t";
 	    	result += right.toString();
             }

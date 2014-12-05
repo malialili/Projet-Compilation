@@ -6,12 +6,12 @@ import env.*;
 import type.*;
 
 public class Main {
-	static int id=0;
+	/*static int id=0;
 	static Env workingEnv=null;
 	static Env currentEnv=null;
 	static Env firstEnv=null;
 	static Env currentTypedef=null;
-	static Env firstTypedef=null;
+	static Env firstTypedef=null;*/
 	public static void main(String[] args) {
 		try {
 			// On ouvre le fichier à lire
