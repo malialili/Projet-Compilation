@@ -236,30 +236,3 @@ exprl ::=
 								new Type(EnumType.VARIABLE);
 							:}
 	;
-	
-	
-	
-	/*
-inst ::= 
-	expr:t SEMIC		{: System.err.printf("*** inst \n"); RESULT = t; :} 
-	|stm:t SEMIC		{: System.err.printf("*** stm\n"); RESULT = t; :}
-	|cond:c				{:  RESULT = c;:}
-	|boucl:b			{:  RESULT = b;:}
-	;
-
-stm ::=
-	lhs:e1 AFF rhs:e2					{: System.err.printf("*** AFF\n"); RESULT = new SyntAbstr(e1, e2, EnumTag.AFF); :}
-	|RETURN expr:e						{:  RESULT = e;:}
-	;
-	
-cond ::=
-	IF exprl:e stm:i1 ELSE stm:i2  	{: System.err.printf("*** ELSE \n");  RESULT = new SyntAbstr( new SyntAbstr(e, i1, EnumTag.IF), i2, EnumTag.ELSE ); :}	
-	|IF exprl:e stm:i  					{: System.err.printf("*** IF \n");   RESULT = new SyntAbstr(e, i, EnumTag.IF); :} %prec IF_WITHOUT_ELSE
-	;
-	
-boucl::=
-	WHILE exprl:e stm:i 				{:  RESULT =  new SyntAbstr(e, i, EnumTag.WHILE); :}
-	|FOREACH ID:t IN list:l stm:i 		{:  RESULT = i;:}
-	|REPEAT stm:t WHILE exprl:e 		{:  RESULT = e;:}
-	;
-	*/
