@@ -6,13 +6,6 @@ import stree.*;
 import type.*;
 import env.*;
 
-/*parser code {:
-     
-
-     public void syntax_error(Symbol cur_token)	{
-	System.err.printf("Error!!!!!!!!!! at Line: %d Col: %d\n",cur_token.left, cur_token.right );
-     }
-:}*/
 parser code {: 
 
     public void report_error(String message, Object info) {
@@ -130,8 +123,8 @@ params ::=
 	|LPAR param:p RPAR					{:	System.err.printf("*** params \n"); RESULT = p;:}			
 	;
 param ::= 
-	var:t TDOT stype:s			{:	System.err.printf("*** param \n"); RESULT = s;:}
-	|var:t TDOT ctype:c 		{:	System.err.printf("*** param \n"); RESULT = c;:}
+	var:t TDOT stype:s		{:	System.err.printf("*** param \n"); RESULT = s;:}
+	|var:t TDOT ctype:c 	{:	System.err.printf("*** param \n"); RESULT = c;:}
 	;
 vars::=
 	vars:v COMMA var:s		{:	System.err.printf("*** param \n"); RESULT = v;:}
